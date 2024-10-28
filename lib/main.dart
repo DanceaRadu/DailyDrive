@@ -1,7 +1,7 @@
 import 'package:daily_drive/color_palette.dart';
 import 'package:daily_drive/firebase_options.dart';
+import 'package:daily_drive/pages/auth_pages/auth_page.dart';
 import 'package:daily_drive/pages/home_page.dart';
-import 'package:daily_drive/pages/login_page/login_page.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
@@ -64,7 +64,7 @@ class AuthWrapper extends StatelessWidget {
         } else if (snapshot.hasData) {
           return HomePage(user: snapshot.data!);
         } else {
-          return const LoginPage();
+          return const AuthPage();
         }
       },
     );

@@ -1,14 +1,15 @@
+import 'package:daily_drive/styling_variables.dart';
 import 'package:flutter/material.dart';
 import '../../color_palette.dart';
 
-class LoginFormField extends StatelessWidget {
+class AuthFormField extends StatelessWidget {
   final String labelText;
   final IconData icon;
   final bool obscureText;
   final TextEditingController? controller;
   final FormFieldValidator<String>? validator;
 
-  const LoginFormField({
+  const AuthFormField({
     super.key,
     required this.labelText,
     required this.icon,
@@ -30,17 +31,17 @@ class LoginFormField extends StatelessWidget {
           color: ColorPalette.textColor,
         ),
         border: OutlineInputBorder(
-          borderRadius: BorderRadius.circular(14.0),
+          borderRadius: BorderRadius.circular(StylingVariables.borderRadius),
         ),
         enabledBorder: OutlineInputBorder(
-          borderRadius: BorderRadius.circular(14.0),
+          borderRadius: BorderRadius.circular(StylingVariables.borderRadius),
           borderSide: const BorderSide(
             color: Color.fromRGBO(130, 130, 130, 1.0),
             width: 2.0,
           ),
         ),
         focusedBorder: OutlineInputBorder(
-          borderRadius: BorderRadius.circular(14.0),
+          borderRadius: BorderRadius.circular(StylingVariables.borderRadius),
           borderSide: const BorderSide(
             color: ColorPalette.accentColor,
             width: 2.0,
