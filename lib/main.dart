@@ -6,6 +6,13 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
 
+var kColorScheme = ColorScheme.fromSeed(
+    seedColor: ColorPalette.seedColor,
+    surface: ColorPalette.surface,
+    onSurface: ColorPalette.onSurface,
+    secondary: ColorPalette.secondary,
+);
+
 Future<void> main() async {
   WidgetsFlutterBinding.ensureInitialized();
   await Firebase.initializeApp(
@@ -21,30 +28,37 @@ class MyApp extends StatelessWidget {
   Widget build(BuildContext context) {
     return MaterialApp(
       title: 'Daily.Drive',
-      theme: ThemeData(
-        colorScheme: ColorScheme.fromSeed(
-          seedColor: ColorPalette.backgroundColor,
-          surface: ColorPalette.backgroundColor,
+      theme: ThemeData().copyWith(
+        colorScheme: kColorScheme,
+        scaffoldBackgroundColor: ColorPalette.surface,
+        appBarTheme: const AppBarTheme().copyWith(
+          backgroundColor: ColorPalette.surface,
+          foregroundColor: ColorPalette.onSurface,
         ),
-        textTheme: const TextTheme(
-          bodyLarge: TextStyle(color: ColorPalette.textColor),
-          bodyMedium: TextStyle(color: ColorPalette.textColor),
-          bodySmall: TextStyle(color: ColorPalette.textColor),
-          headlineLarge: TextStyle(color: ColorPalette.textColor),
-          headlineMedium: TextStyle(color: ColorPalette.textColor),
-          headlineSmall: TextStyle(color: ColorPalette.textColor),
-          displayLarge: TextStyle(color: ColorPalette.textColor),
-          displayMedium: TextStyle(color: ColorPalette.textColor),
-          displaySmall: TextStyle(color: ColorPalette.textColor),
-          titleLarge: TextStyle(color: ColorPalette.textColor),
-          titleMedium: TextStyle(color: ColorPalette.textColor),
-          titleSmall: TextStyle(color: ColorPalette.textColor),
-          labelLarge: TextStyle(color: ColorPalette.textColor),
-          labelMedium: TextStyle(color: ColorPalette.textColor),
-          labelSmall: TextStyle(color: ColorPalette.textColor),
+        bottomNavigationBarTheme: const BottomNavigationBarThemeData(
+          backgroundColor: ColorPalette.onSurface,
+          selectedItemColor: ColorPalette.secondary,
+          unselectedItemColor: ColorPalette.surface,
         ),
-        fontFamily: 'Roboto',
-        useMaterial3: true,
+        textTheme: ThemeData().textTheme.copyWith(
+          displayLarge: ThemeData().textTheme.displayLarge?.copyWith(letterSpacing: 1.1),
+          displayMedium: ThemeData().textTheme.displayMedium?.copyWith(letterSpacing: 1.1),
+          displaySmall: ThemeData().textTheme.displaySmall?.copyWith(letterSpacing: 1.1),
+          headlineMedium: ThemeData().textTheme.headlineMedium?.copyWith(letterSpacing: 1.1),
+          headlineSmall: ThemeData().textTheme.headlineSmall?.copyWith(letterSpacing: 1.1),
+          titleMedium: ThemeData().textTheme.titleMedium?.copyWith(letterSpacing: 1.1),
+          titleSmall: ThemeData().textTheme.titleSmall?.copyWith(letterSpacing: 1.1),
+          bodyLarge: ThemeData().textTheme.bodyLarge?.copyWith(letterSpacing: 1.1),
+          bodyMedium: ThemeData().textTheme.bodyMedium?.copyWith(letterSpacing: 1.1),
+          bodySmall: ThemeData().textTheme.bodySmall?.copyWith(letterSpacing: 1.1),
+          labelLarge: ThemeData().textTheme.labelLarge?.copyWith(letterSpacing: 1.1),
+          labelSmall: ThemeData().textTheme.labelSmall?.copyWith(letterSpacing: 1.1),
+          titleLarge: ThemeData().textTheme.titleLarge?.copyWith(
+            fontSize: 22,
+            fontWeight: FontWeight.w500,
+            letterSpacing: 2.0
+          )
+        )
       ),
       home: const AuthWrapper(),
     );

@@ -18,7 +18,7 @@ class MainButton extends StatelessWidget {
       child: Container(
         decoration: BoxDecoration(
           gradient: const LinearGradient(
-            colors: [Color(0xFFA1FFC1), ColorPalette.accentColor],
+            colors: [Color(0xFFA1FFC1), ColorPalette.accent],
             begin: Alignment.topLeft,
             end: Alignment.bottomRight,
           ),

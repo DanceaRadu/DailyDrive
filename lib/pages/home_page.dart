@@ -1,36 +1,59 @@
+import 'package:daily_drive/pages/dashboard_page.dart';
+import 'package:daily_drive/pages/profile_page.dart';
 import 'package:flutter/material.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 
-class HomePage extends StatelessWidget {
+import 'exercise_page/exercise_page.dart';
+
+class HomePage extends StatefulWidget {
+  const HomePage({super.key, required this.user});
   final User user;
 
-  const HomePage({super.key, required this.user});
+  @override
+  State<HomePage> createState() => _HomePageState();
+}
+
+class _HomePageState extends State<HomePage> {
+
+  int _selectedPageIndex = 0;
+  void _selectPage(int index) {
+    setState(() {
+      _selectedPageIndex = index;
+    });
+  }
 
   @override
   Widget build(BuildContext context) {
+
+    Widget activePage = const DashboardPage();
+    var activePageTitle = "Home";
+    if(_selectedPageIndex == 1) {
+      activePage = const ExercisePage();
+      activePageTitle = "Exercises";
+    }
+    if(_selectedPageIndex == 2) {
+      activePage = const ProfilePage();
+      activePageTitle = "Profile";
+    }
+
     return Scaffold(
       appBar: AppBar(
-        title: const Text("Welcome"),
-        actions: [
-          IconButton(
-            icon: const Icon(Icons.exit_to_app),
-            onPressed: () async {
-              await FirebaseAuth.instance.signOut();
-            },
-          )
-        ],
+        title: Text(activePageTitle),
+        centerTitle: true,
       ),
-      body: Center(
-        child: Column(
-          mainAxisAlignment: MainAxisAlignment.center,
-          children: [
-            CircleAvatar(
-              backgroundImage: NetworkImage(user.photoURL ?? ""),
-              radius: 40,
-            ),
-            const SizedBox(height: 16),
-            Text("Welcome, ${user.displayName}"),
-            Text("Email: ${user.email}"),
+      body: activePage,
+      bottomNavigationBar: ClipRRect(
+        borderRadius: const BorderRadius.only(
+          topLeft: Radius.circular(20),
+          topRight: Radius.circular(20),
+        ),
+        child: BottomNavigationBar(
+          currentIndex: _selectedPageIndex,
+          onTap: _selectPage,
+          items: const [
+            BottomNavigationBarItem(icon: Icon(Icons.home), label: "Home"),
+            BottomNavigationBarItem(icon: Icon(Icons.fitness_center), label: "Exercises"),
+            BottomNavigationBarItem(icon: Icon(Icons.person), label: "Profile")
           ],
         ),
       ),
