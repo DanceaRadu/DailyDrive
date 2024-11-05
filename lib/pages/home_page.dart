@@ -1,5 +1,6 @@
+import 'package:daily_drive/color_palette.dart';
 import 'package:daily_drive/pages/dashboard_page.dart';
-import 'package:daily_drive/pages/profile_page.dart';
+import 'package:daily_drive/pages/profile_page/profile_page.dart';
 import 'package:flutter/material.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 
@@ -39,7 +40,9 @@ class _HomePageState extends State<HomePage> {
     return Scaffold(
       appBar: AppBar(
         title: Text(activePageTitle),
+        scrolledUnderElevation: 0,
         centerTitle: true,
+        backgroundColor: _selectedPageIndex == 2 ? ColorPalette.secondary : ColorPalette.surface,
       ),
       body: activePage,
       bottomNavigationBar: ClipRRect(
