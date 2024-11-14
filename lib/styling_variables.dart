@@ -4,4 +4,5 @@ class StylingVariables {
   static const double textMd = 14.0;
   static const double textLg = 16.0;
   static const double textXl = 18.0;
+  static const double pagePadding = 10.0;
 }

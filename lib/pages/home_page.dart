@@ -42,7 +42,7 @@ class _HomePageState extends State<HomePage> {
         title: Text(activePageTitle),
         scrolledUnderElevation: 0,
         centerTitle: true,
-        backgroundColor: _selectedPageIndex == 2 ? ColorPalette.secondary : ColorPalette.surface,
+        backgroundColor: _selectedPageIndex == 2 ? ColorPalette.darkerSurface : ColorPalette.surface,
       ),
       body: activePage,
       bottomNavigationBar: ClipRRect(
