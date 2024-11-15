@@ -1,10 +1,9 @@
 import 'package:daily_drive/color_palette.dart';
-import 'package:daily_drive/pages/profile_page/goals_summary.dart';
+import 'package:daily_drive/pages/profile_page/goals/goals_summary.dart';
 import 'package:daily_drive/pages/profile_page/profile_info.dart';
 import 'package:daily_drive/pages/profile_page/profile_tab_selector.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
-import 'package:google_sign_in/google_sign_in.dart';
 
 import '../../styling_variables.dart';
 
@@ -74,39 +73,8 @@ class _ProfilePageState extends State<ProfilePage> {
                   child: Column(
                     children: [
                       ProfileTabSelector(selectedIndex: selectedIndex, onTap: onTap),
+                      const SizedBox(height: 25),
                       renderedTab,
-                      const SizedBox(height: 10),
-                      OutlinedButton(
-                        onPressed: () async {
-                          await FirebaseAuth.instance.signOut();
-                          await GoogleSignIn().signOut();
-                        },
-                        style: OutlinedButton.styleFrom(
-                          side: const BorderSide(color: Color.fromARGB(150, 255, 0, 0), width: 2.0), // Border color and width
-                          shape: RoundedRectangleBorder(
-                            borderRadius: BorderRadius.circular(8.0), // Rounded corners
-                          ),
-                          padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8), // Button padding
-                        ),
-                        child: const Row(
-                          mainAxisSize: MainAxisSize.min,
-                          children: [
-                            Icon(
-                              Icons.exit_to_app,
-                              color: Color.fromARGB(150, 255, 0, 0),
-                            ),
-                            SizedBox(width: 8), // Spacing between icon and text
-                            Text(
-                              "Logout",
-                              style: TextStyle(
-                                color: Color.fromARGB(150, 255, 0, 0), // Text color to match border
-                                fontSize: 16,
-                                fontWeight: FontWeight.bold,
-                              ),
-                            ),
-                          ],
-                        ),
-                      ),
                       const SizedBox(height: 15),
                     ]
                   ),

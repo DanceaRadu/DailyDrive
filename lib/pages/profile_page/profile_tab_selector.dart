@@ -23,7 +23,7 @@ class ProfileTabSelector extends StatelessWidget {
               width: 90,
               padding: const EdgeInsets.all(8),
               decoration: BoxDecoration(
-                color: selectedIndex == 0 ? ColorPalette.secondary : ColorPalette.darkerSurface,
+                color: selectedIndex == 0 ? ColorPalette.accent : ColorPalette.darkerSurface,
                 borderRadius: BorderRadius.circular(8),
               ),
               child: const Column(
@@ -47,7 +47,7 @@ class ProfileTabSelector extends StatelessWidget {
               width: 90,
               padding: const EdgeInsets.all(8),
               decoration: BoxDecoration(
-                color: selectedIndex == 1 ? ColorPalette.secondary : ColorPalette.darkerSurface,
+                color: selectedIndex == 1 ? ColorPalette.accent : ColorPalette.darkerSurface,
                 borderRadius: BorderRadius.circular(8),
               ),
               child: const Column(

@@ -3,6 +3,7 @@ import 'package:daily_drive/pages/dashboard_page.dart';
 import 'package:daily_drive/pages/profile_page/profile_page.dart';
 import 'package:flutter/material.dart';
 import 'package:firebase_auth/firebase_auth.dart';
+import 'package:google_sign_in/google_sign_in.dart';
 
 import 'exercise_page/exercise_page.dart';
 
@@ -43,6 +44,15 @@ class _HomePageState extends State<HomePage> {
         scrolledUnderElevation: 0,
         centerTitle: true,
         backgroundColor: _selectedPageIndex == 2 ? ColorPalette.darkerSurface : ColorPalette.surface,
+        actions: _selectedPageIndex == 2 ? [
+          IconButton(
+            icon: const Icon(Icons.logout),
+            onPressed: () async {
+              await FirebaseAuth.instance.signOut();
+              await GoogleSignIn().signOut();
+            },
+          ),
+        ] : [],
       ),
       body: activePage,
       bottomNavigationBar: ClipRRect(
