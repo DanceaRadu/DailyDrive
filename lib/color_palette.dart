@@ -13,5 +13,5 @@ class ColorPalette {
   static const Color invertedTextColor = Color(0xFF12122B);
   static const Color grayedOutTextColor = Color(0xFF7F7F7F);
   static const Color backgroundColor = Color(0xFF12122B);
-  static const Color errorColor = Color(0xFFB00020);
+  static const Color errorColor = Color(0xFF800015);
 }

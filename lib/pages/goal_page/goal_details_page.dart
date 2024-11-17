@@ -1,6 +1,7 @@
 import 'package:daily_drive/color_palette.dart';
 import 'package:daily_drive/styling_variables.dart';
-import 'package:daily_drive/widgets/main_button.dart';
+import 'package:daily_drive/widgets/delete_button.dart';
+import 'package:daily_drive/widgets/edit_button.dart';
 import 'package:flutter/material.dart';
 
 import '../../models/goal.model.dart';
@@ -13,13 +14,36 @@ class GoalDetailsPage extends StatelessWidget {
   const GoalDetailsPage({super.key, required this.goal});
 
   Future<void> _onDelete(BuildContext context) async {
-    GoalsService goalsService = GoalsService();
-    if(goal.goalId == null) {
-      return;
-    }
-    await goalsService.deleteGoal(goal.goalId!);
-    if(context.mounted) {
-      Navigator.pop(context);
+    bool? confirmation = await showDialog<bool>(
+      context: context,
+      builder: (BuildContext context) {
+        return AlertDialog(
+          backgroundColor: ColorPalette.darkerSurface,
+          title: const Text('Confirm Deletion'),
+          content: const Text('Are you sure you want to delete this goal?'),
+          actions: [
+            TextButton(
+              onPressed: () => Navigator.pop(context, false), // User cancels
+              child: const Text('Cancel'),
+            ),
+            TextButton(
+              onPressed: () => Navigator.pop(context, true), // User confirms
+              child: const Text('Delete'),
+            ),
+          ],
+        );
+      },
+    );
+
+    if (confirmation == true) {
+      GoalsService goalsService = GoalsService();
+      if (goal.goalId == null) {
+        return;
+      }
+      await goalsService.deleteGoal(goal.goalId!);
+      if (context.mounted) {
+        Navigator.pop(context);
+      }
     }
   }
 
@@ -104,7 +128,20 @@ class GoalDetailsPage extends StatelessWidget {
               ],
             ),
             const SizedBox(height: 20),
-            MainButton(text: "Delete", onPressed: () => _onDelete(context)),
+            Row(
+              mainAxisAlignment: MainAxisAlignment.center,
+              children: [
+                EditButton(
+                    onEdit: () {},
+                    label: "Edit"
+                ),
+                const SizedBox(width: 10),
+                DeleteButton(
+                    onDelete: () { _onDelete(context); },
+                    label: "Delete"
+                )
+              ],
+            )
           ],
         ),
       ),
