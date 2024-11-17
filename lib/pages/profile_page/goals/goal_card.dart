@@ -13,6 +13,13 @@ class GoalCard extends ConsumerWidget {
 
   const GoalCard({super.key, required this.goal});
 
+  String formatNumber(num number) {
+    if (number == number.round()) {
+      return number.round().toString();
+    }
+    return number.toString();
+  }
+
   @override
   Widget build(BuildContext context, WidgetRef ref) {
 
@@ -40,6 +47,7 @@ class GoalCard extends ConsumerWidget {
                       ? constraints.maxWidth
                       : constraints.maxHeight;
                   String goalPercentageString = '${((goal.currentProgress / goal.goal) * 100).toInt()}%';
+                  String goalProgressString = '${formatNumber(goal.currentProgress)} / ${formatNumber(goal.goal)}';
 
                   return CircularPercentIndicator(
                     radius: parentSize * 0.48,
@@ -68,7 +76,7 @@ class GoalCard extends ConsumerWidget {
                         ),
                         const SizedBox(height: 4.0),
                         Text(
-                          '${goal.currentProgress} / ${goal.goal}',
+                          goalProgressString,
                           style: TextStyle(
                             fontSize: 14.0,
                             color: Colors.grey[400],

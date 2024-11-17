@@ -6,6 +6,7 @@ import 'package:daily_drive/utils/validators.dart';
 import 'package:daily_drive/widgets/main_dropdown.dart';
 import 'package:daily_drive/widgets/main_text_field.dart';
 import 'package:firebase_auth/firebase_auth.dart';
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:collection/collection.dart';
 
@@ -48,34 +49,36 @@ class _GoalsFormState extends State<GoalsForm> {
   }
 
   Future<void> _handleAddGoal() async {
+    if(!_formKey.currentState!.validate()) return;
 
-    if (_formKey.currentState!.validate()) {
-      setState(() {
-        isLoading = true;
-      });
-      try {
-        GoalsService goalsService = GoalsService();
-        final User? user = FirebaseAuth.instance.currentUser;
-        if(user == null) {
-          throw Exception("User is not logged in");
-        }
-        String exerciseId = widget.exerciseTypes.firstWhereOrNull((element) => element.name == selectedExercise)?.exerciseTypeId ?? "";
-        await goalsService.addGoal(Goal(
-            userId: user.uid,
-            exerciseType: exerciseId,
-            title: _titleController.text,
-            createdAt: DateTime.now(),
-            currentProgress: 0,
-            goal: double.parse(_goalController.text)
-        ));
-      } catch (e) {
-        print("Error: $e");
-      } finally {
-        setState(() {
-          isLoading = false;
-          Navigator.pop(context);
-        });
+    setState(() {
+      isLoading = true;
+    });
+
+    try {
+      GoalsService goalsService = GoalsService();
+      final User? user = FirebaseAuth.instance.currentUser;
+      if(user == null) {
+        throw Exception("User is not logged in");
       }
+      String exerciseId = widget.exerciseTypes.firstWhereOrNull((element) => element.name == selectedExercise)?.exerciseTypeId ?? "";
+      await goalsService.addGoal(Goal(
+          userId: user.uid,
+          exerciseType: exerciseId,
+          title: _titleController.text,
+          createdAt: DateTime.now(),
+          currentProgress: 0,
+          goal: double.parse(_goalController.text)
+      ));
+    } catch (e) {
+      if (kDebugMode) {
+        print("Error: $e");
+      }
+    } finally {
+      setState(() {
+        isLoading = false;
+        Navigator.pop(context);
+      });
     }
   }
 
@@ -127,12 +130,19 @@ class _GoalsFormState extends State<GoalsForm> {
               if(selectedGoalType == "Periodic") PeriodicGoalSubform(
                   exerciseType: widget.exerciseTypes.firstWhereOrNull((element) => element.name == selectedExercise)
               ),
-              const SizedBox(height: 16.0),
+              const SizedBox(height: 24.0),
               MainButton(
                   text: 'Add goal',
                   onPressed: _handleAddGoal,
                   isLoading: isLoading
-              )
+              ),
+              const SizedBox(height: 8.0),
+              TextButton(
+                onPressed: () {
+                  Navigator.pop(context);
+                },
+                child: const Text('Cancel'),
+              ),
             ],
           )
         ),

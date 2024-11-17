@@ -1,5 +1,4 @@
 import 'package:firebase_auth/firebase_auth.dart';
-import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:google_sign_in/google_sign_in.dart';
 
@@ -26,6 +25,8 @@ class _LoginFormState extends State<LoginForm> {
   final _passwordController = TextEditingController();
   final _formKey = GlobalKey<FormState>();
 
+  bool isLoading = false;
+
   void _showErrorDialog(String title, String message) {
     showDialog(
         context: context,
@@ -37,8 +38,17 @@ class _LoginFormState extends State<LoginForm> {
 
   Future<User?> _signInWithGoogle() async {
     try {
+      setState(() {
+        isLoading = true;
+      });
       final GoogleSignInAccount? googleUser = await widget.googleSignIn.signIn();
-      if (googleUser == null) return null;
+      if (googleUser == null) {
+        setState(() {
+          isLoading = false;
+          _showErrorDialog('Login error', 'Something went wrong.');
+        });
+        return null;
+      }
 
       final GoogleSignInAuthentication googleAuth = await googleUser.authentication;
 
@@ -50,9 +60,10 @@ class _LoginFormState extends State<LoginForm> {
       UserCredential userCredential = await widget.auth.signInWithCredential(credential);
       return userCredential.user;
     } catch (e) {
-      if (kDebugMode) {
-        print(e);
-      }
+      setState(() {
+        isLoading = false;
+        _showErrorDialog('Login error', 'Something went wrong.');
+      });
       return null;
     }
   }
@@ -60,12 +71,17 @@ class _LoginFormState extends State<LoginForm> {
   Future<void> _login() async {
     if (_formKey.currentState?.validate() ?? false) {
       try {
-        final UserCredential userCredential = await widget.auth.signInWithEmailAndPassword(
+        setState(() {
+          isLoading = true;
+        });
+        await widget.auth.signInWithEmailAndPassword(
           email: _emailController.text.trim(),
           password: _passwordController.text.trim(),
         );
       } on FirebaseAuthException catch (e) {
         setState(() {
+          _passwordController.clear();
+          isLoading = false;
           _showErrorDialog('Login error', 'Please check your email and password and try again.');
         });
       }
@@ -82,7 +98,7 @@ class _LoginFormState extends State<LoginForm> {
           const SizedBox(height: 25),
           AuthFormField(labelText: "Password", icon: Icons.password, obscureText: true, controller: _passwordController, validator: nullValidator),
           const SizedBox(height: 40),
-          MainButton(text: 'Login', onPressed: _login),
+          MainButton(text: 'Login', onPressed: _login, isLoading: isLoading),
           const SizedBox(height: 20),
           const Text(
             "OR",

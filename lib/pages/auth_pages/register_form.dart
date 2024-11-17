@@ -21,6 +21,7 @@ class _RegisterFormState extends State<RegisterForm> {
   final _passwordController = TextEditingController();
   final _confirmPasswordController = TextEditingController();
   final _formKey = GlobalKey<FormState>();
+  bool isLoading = false;
 
   void _showErrorDialog(String title, String message) {
     showDialog(
@@ -41,6 +42,9 @@ class _RegisterFormState extends State<RegisterForm> {
     }
 
     try {
+      setState(() {
+        isLoading = true;
+      });
       UserCredential userCredential = await FirebaseAuth.instance
           .createUserWithEmailAndPassword(
         email: _emailController.text.trim(),
@@ -56,6 +60,10 @@ class _RegisterFormState extends State<RegisterForm> {
       _showErrorDialog('Registration error', 'Failed to register.');
     } catch (e) {
       _showErrorDialog('Registration error', 'Unknown error occurred.');
+    } finally {
+      setState(() {
+        isLoading = false;
+      });
     }
   }
 
@@ -73,7 +81,7 @@ class _RegisterFormState extends State<RegisterForm> {
           const SizedBox(height: 25),
           AuthFormField(labelText: "Confirm Password", icon: Icons.password, obscureText: true, controller: _confirmPasswordController, validator: nullValidator),
           const SizedBox(height: 30),
-          MainButton(text: 'Register', onPressed: _register),
+          MainButton(text: 'Register', onPressed: _register, isLoading: isLoading),
           const SizedBox(height: 20),
         ],
       ),
