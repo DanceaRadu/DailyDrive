@@ -3,8 +3,8 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 class Goal {
   final String? goalId;
   final String userId;
+  final String exerciseType;
   final String title;
-  final DateTime? deadline;
   final DateTime createdAt;
   final num goal;
   final num currentProgress;
@@ -12,8 +12,8 @@ class Goal {
   Goal({
     this.goalId,
     required this.userId,
+    required this.exerciseType,
     required this.title,
-    required this.deadline,
     required this.createdAt,
     required this.goal,
     required this.currentProgress,
@@ -22,9 +22,9 @@ class Goal {
   Map<String, dynamic> toMap() {
     return {
       'userId': userId,
+      'exerciseType': exerciseType,
       'title': title,
-      'deadline': deadline != null ? Timestamp.fromDate(deadline!) : null,
-      'createdAd': Timestamp.fromDate(createdAt),
+      'createdAt': Timestamp.fromDate(createdAt),
       'goal': goal,
       'currentProgress': currentProgress,
     };
@@ -34,10 +34,8 @@ class Goal {
     return Goal(
       goalId: docId,
       userId: map['userId'] ?? '',
+      exerciseType: map['exerciseType'] ?? '',
       title: map['title'] ?? '',
-      deadline: map['deadline'] != null
-          ? (map['deadline'] as Timestamp).toDate()
-          : null,
       createdAt: (map['createdAt'] as Timestamp).toDate(),
       goal: map['goal'] ?? 0.0,
       currentProgress: map['currentProgress'] ?? 0.0,

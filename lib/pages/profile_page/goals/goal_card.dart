@@ -1,4 +1,5 @@
 import 'package:daily_drive/color_palette.dart';
+import 'package:daily_drive/pages/goal_page/goal_details_page.dart';
 import 'package:daily_drive/providers/exercise_type.provider.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
@@ -19,55 +20,65 @@ class GoalCard extends ConsumerWidget {
 
     return exerciseTypesStream.when(
       data: (exerciseTypes) {
-        return Card(
-          color: ColorPalette.darkerSurface,
-          child: Padding(
-            padding: const EdgeInsets.all(12.0),
-            child: LayoutBuilder(
-              builder: (context, constraints) {
+        return GestureDetector(
+          onTap: () {
+            Navigator.push(
+              context,
+              MaterialPageRoute(
+                builder: (context) => GoalDetailsPage(goal: goal),
+              ),
+            );
+          },
+          child: Card(
+            color: ColorPalette.darkerSurface,
+            child: Padding(
+              padding: const EdgeInsets.all(8.0),
+              child: LayoutBuilder(
+                builder: (context, constraints) {
 
-                double parentSize = constraints.maxWidth < constraints.maxHeight
-                    ? constraints.maxWidth
-                    : constraints.maxHeight;
-                String goalPercentageString = '${((goal.currentProgress / goal.goal) * 100).toInt()}%';
+                  double parentSize = constraints.maxWidth < constraints.maxHeight
+                      ? constraints.maxWidth
+                      : constraints.maxHeight;
+                  String goalPercentageString = '${((goal.currentProgress / goal.goal) * 100).toInt()}%';
 
-                return CircularPercentIndicator(
-                  radius: parentSize * 0.5,
-                  lineWidth: 15,
-                  animation: true,
-                  percent: goal.currentProgress / goal.goal,
-                  circularStrokeCap: CircularStrokeCap.round,
-                  progressColor: ColorPalette.accent,
-                  backgroundColor: ColorPalette.surface,
-                  header: Padding(
-                    padding: const EdgeInsets.only(bottom: 10),
-                    child: Text(
-                      goal.title,
+                  return CircularPercentIndicator(
+                    radius: parentSize * 0.48,
+                    lineWidth: 15,
+                    animation: true,
+                    percent: goal.currentProgress / goal.goal,
+                    circularStrokeCap: CircularStrokeCap.round,
+                    progressColor: ColorPalette.accent,
+                    backgroundColor: ColorPalette.surface,
+                    header: Padding(
+                      padding: const EdgeInsets.only(bottom: 10),
+                      child: Text(
+                        goal.title,
+                      ),
                     ),
-                  ),
-                  center: Column(
-                    mainAxisAlignment: MainAxisAlignment.center,
-                    children: [
-                      Text(
-                        goalPercentageString,
-                        style: const TextStyle(
-                          fontSize: 20.0,
-                          fontWeight: FontWeight.bold,
-                          color: Colors.white,
+                    center: Column(
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      children: [
+                        Text(
+                          goalPercentageString,
+                          style: const TextStyle(
+                            fontSize: 20.0,
+                            fontWeight: FontWeight.bold,
+                            color: Colors.white,
+                          ),
                         ),
-                      ),
-                      const SizedBox(height: 4.0),
-                      Text(
-                        '${goal.currentProgress} / ${goal.goal}',
-                        style: TextStyle(
-                          fontSize: 14.0,
-                          color: Colors.grey[400],
+                        const SizedBox(height: 4.0),
+                        Text(
+                          '${goal.currentProgress} / ${goal.goal}',
+                          style: TextStyle(
+                            fontSize: 14.0,
+                            color: Colors.grey[400],
+                          ),
                         ),
-                      ),
-                    ],
-                  ),
-                );
-              }
+                      ],
+                    ),
+                  );
+                }
+              ),
             ),
           ),
         );
