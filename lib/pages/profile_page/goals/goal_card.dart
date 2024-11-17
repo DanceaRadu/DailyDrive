@@ -10,8 +10,15 @@ import '../../../models/goal.model.dart';
 class GoalCard extends ConsumerWidget {
 
   final Goal goal;
+  final bool animate;
+  final bool showTitle;
 
-  const GoalCard({super.key, required this.goal});
+  const GoalCard({
+    super.key,
+    required this.goal,
+    this.animate = true,
+    this.showTitle = true,
+  });
 
   String formatNumber(num number) {
     if (number == number.round()) {
@@ -36,56 +43,58 @@ class GoalCard extends ConsumerWidget {
               ),
             );
           },
-          child: Card(
-            color: ColorPalette.darkerSurface,
-            child: Padding(
-              padding: const EdgeInsets.all(8.0),
-              child: LayoutBuilder(
-                builder: (context, constraints) {
+          child: SizedBox.expand(
+            child: Card(
+              color: ColorPalette.darkerSurface,
+              child: Padding(
+                padding: const EdgeInsets.all(8.0),
+                child: LayoutBuilder(
+                  builder: (context, constraints) {
 
-                  double parentSize = constraints.maxWidth < constraints.maxHeight
-                      ? constraints.maxWidth
-                      : constraints.maxHeight;
-                  String goalPercentageString = '${((goal.currentProgress / goal.goal) * 100).toInt()}%';
-                  String goalProgressString = '${formatNumber(goal.currentProgress)} / ${formatNumber(goal.goal)}';
-
-                  return CircularPercentIndicator(
-                    radius: parentSize * 0.48,
-                    lineWidth: 15,
-                    animation: true,
-                    percent: goal.currentProgress / goal.goal,
-                    circularStrokeCap: CircularStrokeCap.round,
-                    progressColor: ColorPalette.accent,
-                    backgroundColor: ColorPalette.surface,
-                    header: Padding(
-                      padding: const EdgeInsets.only(bottom: 10),
-                      child: Text(
-                        goal.title,
+                    double availableSize = constraints.maxWidth < constraints.maxHeight
+                        ? constraints.maxWidth
+                        : constraints.maxHeight;
+                    String goalPercentageString = '${((goal.currentProgress / goal.goal) * 100).toInt()}%';
+                    String goalProgressString = '${formatNumber(goal.currentProgress)} / ${formatNumber(goal.goal)}';
+            
+                    return CircularPercentIndicator(
+                      radius: availableSize / 2 - 2,
+                      lineWidth: 15,
+                      animation: animate,
+                      percent: goal.currentProgress / goal.goal,
+                      circularStrokeCap: CircularStrokeCap.round,
+                      progressColor: ColorPalette.accent,
+                      backgroundColor: ColorPalette.surface,
+                      header: showTitle ? Padding(
+                        padding: const EdgeInsets.only(bottom: 10),
+                        child: Text(
+                          goal.title,
+                        ),
+                      ) : null,
+                      center: Column(
+                        mainAxisAlignment: MainAxisAlignment.center,
+                        children: [
+                          Text(
+                            goalPercentageString,
+                            style: const TextStyle(
+                              fontSize: 20.0,
+                              fontWeight: FontWeight.bold,
+                              color: Colors.white,
+                            ),
+                          ),
+                          const SizedBox(height: 4.0),
+                          Text(
+                            goalProgressString,
+                            style: TextStyle(
+                              fontSize: 14.0,
+                              color: Colors.grey[400],
+                            ),
+                          ),
+                        ],
                       ),
-                    ),
-                    center: Column(
-                      mainAxisAlignment: MainAxisAlignment.center,
-                      children: [
-                        Text(
-                          goalPercentageString,
-                          style: const TextStyle(
-                            fontSize: 20.0,
-                            fontWeight: FontWeight.bold,
-                            color: Colors.white,
-                          ),
-                        ),
-                        const SizedBox(height: 4.0),
-                        Text(
-                          goalProgressString,
-                          style: TextStyle(
-                            fontSize: 14.0,
-                            color: Colors.grey[400],
-                          ),
-                        ),
-                      ],
-                    ),
-                  );
-                }
+                    );
+                  }
+                ),
               ),
             ),
           ),
