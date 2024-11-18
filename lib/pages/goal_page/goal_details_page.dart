@@ -23,11 +23,11 @@ class GoalDetailsPage extends StatelessWidget {
           content: const Text('Are you sure you want to delete this goal?'),
           actions: [
             TextButton(
-              onPressed: () => Navigator.pop(context, false), // User cancels
+              onPressed: () => Navigator.pop(context, false),
               child: const Text('Cancel'),
             ),
             TextButton(
-              onPressed: () => Navigator.pop(context, true), // User confirms
+              onPressed: () => Navigator.pop(context, true),
               child: const Text('Delete'),
             ),
           ],

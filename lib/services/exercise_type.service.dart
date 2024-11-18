@@ -8,6 +8,7 @@ class ExerciseTypesService {
   Stream<List<ExerciseType>> getExerciseTypes() {
     return _firestore
         .collection('exercise_types')
+        .orderBy('name')
         .snapshots()
         .map((snapshot) => snapshot.docs
         .map((doc) => ExerciseType.fromMap(doc.data(), doc.id))
