@@ -18,6 +18,7 @@ class ExerciseCard extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return InkWell(
+      borderRadius: BorderRadius.circular(15.0),
       onTap: () {
         Navigator.push(
             context,
