@@ -54,28 +54,16 @@ class GoalsSummary extends ConsumerWidget {
               mainAxisSpacing: 4,
               childAspectRatio: 0.85,
             ),
-            itemCount: combinedData.value!.repeatingGoals.length,
+            itemCount: combinedData.value!.goals.length + combinedData.value!.repeatingGoals.length + 1,
             itemBuilder: (BuildContext context, int index) {
-              return RepeatingGoalCard(goal: combinedData.value!.repeatingGoals[index]);
-            },
-          ),
-          GridView.builder(
-            shrinkWrap: true,
-            physics: const NeverScrollableScrollPhysics(),
-            gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
-              crossAxisCount: 2,
-              crossAxisSpacing: 4,
-              mainAxisSpacing: 4,
-              childAspectRatio: 0.85,
-            ),
-            itemCount: combinedData.value!.goals.length + 1,
-            itemBuilder: (BuildContext context, int index) {
-              if(index == combinedData.value!.goals.length) {
+              if(index == combinedData.value!.goals.length + combinedData.value!.repeatingGoals.length) {
                 return AddGoalCard(
                   onAddGoalPressed: (context) => onAddGoalPressed(context, combinedData.value!.exerciseTypes),
                 );
+              } else if(index < combinedData.value!.goals.length) {
+                return GoalCard(goal: combinedData.value!.goals[index]);
               }
-              return GoalCard(goal: combinedData.value!.goals[index]);
+              return RepeatingGoalCard(goal: combinedData.value!.repeatingGoals[index - combinedData.value!.goals.length]);
             },
           ),
         ],

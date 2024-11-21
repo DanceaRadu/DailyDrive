@@ -1,4 +1,5 @@
 import 'package:daily_drive/models/exercise_type.model.dart';
+import 'package:daily_drive/models/repeating_goal.model.dart';
 import 'package:daily_drive/pages/profile_page/goals/onetime_goal_subform.dart';
 import 'package:daily_drive/pages/profile_page/goals/periodic_goal_subform.dart';
 import 'package:daily_drive/services/goals.service.dart';
@@ -11,6 +12,7 @@ import 'package:flutter/material.dart';
 import 'package:collection/collection.dart';
 
 import '../../../models/goal.model.dart';
+import '../../../models/goal_period.model.dart';
 import '../../../widgets/main_button.dart';
 
 class GoalsForm extends StatefulWidget {
@@ -25,12 +27,16 @@ class GoalsForm extends StatefulWidget {
 
 class _GoalsFormState extends State<GoalsForm> {
 
+  GoalsService goalsService = GoalsService();
+
   String selectedExercise = "";
   String selectedGoalType = "";
   bool isLoading = false;
   final _titleController = TextEditingController();
   final _goalController = TextEditingController();
   final _formKey = GlobalKey<FormState>();
+
+  String selectedGoalPeriodType = "";
 
   onGoalTypeChanged(String? value) {
     setState(() {
@@ -48,6 +54,14 @@ class _GoalsFormState extends State<GoalsForm> {
     });
   }
 
+  onGoalPeriodTypeChanged(String? value) {
+    setState(() {
+      if(value != null) {
+        selectedGoalPeriodType = value;
+      }
+    });
+  }
+
   Future<void> _handleAddGoal() async {
     if(!_formKey.currentState!.validate()) return;
 
@@ -56,20 +70,17 @@ class _GoalsFormState extends State<GoalsForm> {
     });
 
     try {
-      GoalsService goalsService = GoalsService();
       final User? user = FirebaseAuth.instance.currentUser;
       if(user == null) {
         throw Exception("User is not logged in");
       }
       String exerciseId = widget.exerciseTypes.firstWhereOrNull((element) => element.name == selectedExercise)?.exerciseTypeId ?? "";
-      await goalsService.addGoal(Goal(
-          userId: user.uid,
-          exerciseType: exerciseId,
-          title: _titleController.text,
-          createdAt: DateTime.now(),
-          currentProgress: 0,
-          goal: double.parse(_goalController.text)
-      ));
+
+      if(selectedGoalType == "Periodic") {
+        await _addPeriodicGoal(user, exerciseId);
+      } else if(selectedGoalType == "One-time") {
+        await _addOnetimeGoal(user, exerciseId);
+      }
     } catch (e) {
       if (kDebugMode) {
         print("Error: $e");
@@ -80,6 +91,43 @@ class _GoalsFormState extends State<GoalsForm> {
         Navigator.pop(context);
       });
     }
+  }
+
+  _addPeriodicGoal(User user, String goalId) async {
+    goalsService.addRepeatingGoal(RepeatingGoal(
+        userId: user.uid,
+        exerciseType: goalId,
+        title: _titleController.text,
+        goal: double.parse(_goalController.text),
+        periods: [getFirstPeriodForPeriodicGoal(selectedGoalPeriodType)],
+        periodType: selectedGoalPeriodType,
+    ));
+  }
+
+  _addOnetimeGoal(User user, String exerciseId) async {
+    goalsService.addGoal(Goal(
+        userId: user.uid,
+        exerciseType: exerciseId,
+        title: _titleController.text,
+        createdAt: DateTime.now(),
+        currentProgress: 0,
+        goal: double.parse(_goalController.text)
+    ));
+  }
+
+  GoalPeriod getFirstPeriodForPeriodicGoal(String periodType) {
+    int daysOffset;
+    switch(periodType) {
+      case "Daily": daysOffset = 1;
+      case "Weekly": daysOffset = 7;
+      case "Monthly": daysOffset = 30;
+      default: daysOffset = 1;
+    }
+    return GoalPeriod(
+        periodStart: DateTime.now(),
+        periodEnd: DateTime.now().add(Duration(days: daysOffset)),
+        progress: 0
+    );
   }
 
   @override
@@ -128,7 +176,9 @@ class _GoalsFormState extends State<GoalsForm> {
                   goalController: _goalController
               ),
               if(selectedGoalType == "Periodic") PeriodicGoalSubform(
-                  exerciseType: widget.exerciseTypes.firstWhereOrNull((element) => element.name == selectedExercise)
+                  exerciseType: widget.exerciseTypes.firstWhereOrNull((element) => element.name == selectedExercise),
+                  goalController: _goalController,
+                  onGoalPeriodTypeChanged: onGoalPeriodTypeChanged
               ),
               const SizedBox(height: 24.0),
               MainButton(
