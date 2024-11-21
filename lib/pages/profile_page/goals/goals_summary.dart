@@ -1,6 +1,7 @@
 import 'package:daily_drive/pages/profile_page/goals/add_goal_card.dart';
 import 'package:daily_drive/pages/profile_page/goals/goal_card.dart';
 import 'package:daily_drive/pages/profile_page/goals/goals_form.dart';
+import 'package:daily_drive/pages/profile_page/goals/repeating_goal_card.dart';
 import 'package:daily_drive/providers/combined.provider.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
@@ -53,6 +54,20 @@ class GoalsSummary extends ConsumerWidget {
               mainAxisSpacing: 4,
               childAspectRatio: 0.85,
             ),
+            itemCount: combinedData.value!.repeatingGoals.length,
+            itemBuilder: (BuildContext context, int index) {
+              return RepeatingGoalCard(goal: combinedData.value!.repeatingGoals[index]);
+            },
+          ),
+          GridView.builder(
+            shrinkWrap: true,
+            physics: const NeverScrollableScrollPhysics(),
+            gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
+              crossAxisCount: 2,
+              crossAxisSpacing: 4,
+              mainAxisSpacing: 4,
+              childAspectRatio: 0.85,
+            ),
             itemCount: combinedData.value!.goals.length + 1,
             itemBuilder: (BuildContext context, int index) {
               if(index == combinedData.value!.goals.length) {
@@ -74,6 +89,5 @@ class GoalsSummary extends ConsumerWidget {
       },
       loading: () => const CircularProgressIndicator(),
     );
-
   }
 }
