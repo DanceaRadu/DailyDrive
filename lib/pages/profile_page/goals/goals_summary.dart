@@ -52,7 +52,7 @@ class GoalsSummary extends ConsumerWidget {
               crossAxisCount: 2,
               crossAxisSpacing: 4,
               mainAxisSpacing: 4,
-              childAspectRatio: 0.85,
+              childAspectRatio: 0.78,
             ),
             itemCount: combinedData.value!.goals.length + combinedData.value!.repeatingGoals.length + 1,
             itemBuilder: (BuildContext context, int index) {

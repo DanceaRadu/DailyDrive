@@ -5,6 +5,7 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:percent_indicator/circular_percent_indicator.dart';
+import '../../../models/exercise_type.model.dart';
 import '../../../models/goal.model.dart';
 
 class GoalCard extends ConsumerWidget {
@@ -34,6 +35,7 @@ class GoalCard extends ConsumerWidget {
 
     return exerciseTypesStream.when(
       data: (exerciseTypes) {
+        ExerciseType exerciseType = exerciseTypes.firstWhere((exerciseType) => exerciseType.exerciseTypeId == goal.exerciseType);
         return GestureDetector(
           onTap: () {
             Navigator.push(
@@ -66,10 +68,20 @@ class GoalCard extends ConsumerWidget {
                       progressColor: ColorPalette.accent,
                       backgroundColor: ColorPalette.surface,
                       header: showTitle ? Padding(
-                        padding: const EdgeInsets.only(bottom: 10),
-                        child: Text(
-                          goal.title,
-                        ),
+                          padding: const EdgeInsets.only(bottom: 10),
+                          child: Column(
+                              children: [
+                                Text(
+                                  goal.title,
+                                ),
+                                Text(
+                                  exerciseType.namePlural,
+                                  style: TextStyle(
+                                    color: Colors.grey[600],
+                                  ),
+                                ),
+                              ]
+                          )
                       ) : null,
                       center: Column(
                         mainAxisAlignment: MainAxisAlignment.center,

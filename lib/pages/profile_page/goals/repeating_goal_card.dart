@@ -1,4 +1,5 @@
 import 'package:daily_drive/color_palette.dart';
+import 'package:daily_drive/models/exercise_type.model.dart';
 import 'package:daily_drive/models/repeating_goal.model.dart';
 import 'package:daily_drive/pages/goal_page/repeating_goal_details_page.dart';
 import 'package:daily_drive/providers/exercise_type.provider.dart';
@@ -40,6 +41,7 @@ class RepeatingGoalCard extends ConsumerWidget {
 
     return exerciseTypesStream.when(
         data: (exerciseTypes) {
+          ExerciseType exerciseType = exerciseTypes.firstWhere((exerciseType) => exerciseType.exerciseTypeId == goal.exerciseType);
           return GestureDetector(
             onTap: () {
               Navigator.push(
@@ -73,9 +75,19 @@ class RepeatingGoalCard extends ConsumerWidget {
                           backgroundColor: ColorPalette.surface,
                           header: Padding(
                             padding: const EdgeInsets.only(bottom: 10),
-                            child: Text(
-                              goal.title,
-                            ),
+                            child: Column(
+                              children: [
+                                Text(
+                                  goal.title,
+                                ),
+                                Text(
+                                  exerciseType.namePlural,
+                                  style: TextStyle(
+                                    color: Colors.grey[600],
+                                  ),
+                                ),
+                              ]
+                            )
                           ),
                           center: Column(
                             mainAxisAlignment: MainAxisAlignment.center,
