@@ -39,6 +39,14 @@ class ExerciseContext {
     _accelerometerSubscription?.cancel();
   }
 
+  void pauseRepDetection() {
+
+  }
+
+  void resumeRepDetection() {
+
+  }
+
   void reset() {
     _accelerometerSubscription?.cancel();
     _accelerometerSubscription = null;

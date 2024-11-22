@@ -1,5 +1,6 @@
 import 'package:daily_drive/color_palette.dart';
 import 'package:daily_drive/exercise_strategies/exercise_context.dart';
+import 'package:daily_drive/widgets/main_button.dart';
 import 'package:flutter/material.dart';
 
 import '../../models/exercise_type.model.dart';
@@ -18,11 +19,13 @@ class _StartExercisePageState extends State<StartExercisePage> with TickerProvid
   late ExerciseContext _exerciseContext;
   int _repCount = 0;
   bool _isTracking = false;
+  bool _isPaused = false;
 
   late AnimationController _animationController;
   late Animation<Offset> _buttonAnimation;
   late Animation<Offset> _textAnimation;
   late Animation<double> _textFadeAnimation;
+  late Animation<double> _buttonFadeAnimation;
 
   @override
   void initState() {
@@ -35,16 +38,21 @@ class _StartExercisePageState extends State<StartExercisePage> with TickerProvid
     );
 
     _buttonAnimation = Tween<Offset>(
-      begin: Offset.zero,
-      end: const Offset(0, 1),
+      begin: const Offset(0, -0.5),
+      end: const Offset(0, 0.25),
     ).animate(CurvedAnimation(
       parent: _animationController,
       curve: Curves.easeInOut,
     ));
 
+    _buttonFadeAnimation = CurvedAnimation(
+      parent: _animationController,
+      curve: Curves.easeIn,
+    );
+
     _textAnimation = Tween<Offset>(
       begin: const Offset(0, 0.5),
-      end: const Offset(0, -0.5),
+      end: const Offset(0, -0.4),
     ).animate(CurvedAnimation(
       parent: _animationController,
       curve: Curves.easeInOut,
@@ -90,6 +98,24 @@ class _StartExercisePageState extends State<StartExercisePage> with TickerProvid
       _isTracking = false;
     });
     //popup whatever else logic idk
+  }
+
+  void _submit() {
+
+  }
+
+  void _pause() {
+    _exerciseContext.pauseRepDetection();
+    setState(() {
+      _isPaused = true;
+    });
+  }
+  
+  void _resume() {
+    _exerciseContext.resumeRepDetection();
+    setState(() {
+      _isPaused = false;
+    });
   }
 
   Future<bool?> _showBackDialog(BuildContext context) {
@@ -143,26 +169,65 @@ class _StartExercisePageState extends State<StartExercisePage> with TickerProvid
           title: Text(widget.exerciseType.namePlural),
         ),
         body: SizedBox.expand(
-          child: Stack(
-            alignment: Alignment.center,
+          child: Column(
+            mainAxisAlignment: MainAxisAlignment.center,
+            crossAxisAlignment: CrossAxisAlignment.center,
             children: [
               SlideTransition(
                 position: _textAnimation,
                 child: FadeTransition(
                   opacity: _textFadeAnimation,
-                  child: Text(
-                    'Reps: $_repCount',
-                    style: const TextStyle(fontSize: 32, fontWeight: FontWeight.bold),
+                  child: Column(
+                    children: [
+                      Text(
+                        'Reps: $_repCount',
+                        style: const TextStyle(fontSize: 32, fontWeight: FontWeight.bold),
+                      ),
+                      Text(
+                        'Reps: $_repCount',
+                        style: const TextStyle(fontSize: 32, fontWeight: FontWeight.bold),
+                      ),
+                    ]
                   ),
                 ),
               ),
-              SlideTransition(
-                position: _buttonAnimation,
-                child: ElevatedButton(
-                  onPressed: _isTracking ? _stopTracking : _startTracking,
-                  child: Text(_isTracking ? 'Stop Exercise' : 'Start Exercise'),
+              SizedBox(
+                width: 220,
+                child: MainButton(
+                  onPressed: _isTracking ? _submit : _startTracking,
+                  text: _isTracking ? 'Submit' : 'Start Exercise',
                 ),
               ),
+              SizedBox(
+                width: 220,
+                child: Row(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: [
+                    SlideTransition(
+                      position: _buttonAnimation,
+                      child: FadeTransition(
+                        opacity: _buttonFadeAnimation,
+                        child: TextButton.icon(
+                          onPressed: _stopTracking,
+                          icon: const Icon(Icons.restart_alt), // Replace with your desired icon
+                          label: const Text('Reset'),
+                        ),
+                      ),
+                    ),
+                    SlideTransition(
+                      position: _buttonAnimation,
+                      child: FadeTransition(
+                        opacity: _buttonFadeAnimation,
+                        child: TextButton.icon(
+                          onPressed: _isPaused ? _resume : _pause,
+                          icon: _isPaused ? const Icon(Icons.play_arrow) : const Icon(Icons.pause),
+                          label: _isPaused ? const Text('Resume') : const Text('Pause'),
+                        ),
+                      ),
+                    ),
+                  ],
+                ),
+              )
             ],
           ),
         ),
