@@ -1,16 +1,15 @@
-import 'package:daily_drive/models/repeating_goal.model.dart';
 import 'package:flutter/material.dart';
 
 class RepeatingGoalDetailsPage extends StatelessWidget {
 
-  final RepeatingGoal goal;
-  const RepeatingGoalDetailsPage({super.key, required this.goal});
+  final String goalId;
+  const RepeatingGoalDetailsPage({super.key, required this.goalId});
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: Text(goal.title),
+        title: Text(goalId),
       ),
       body: const Placeholder(),
     );

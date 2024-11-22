@@ -39,7 +39,7 @@ class GoalCard extends ConsumerWidget {
             Navigator.push(
               context,
               MaterialPageRoute(
-                builder: (context) => GoalDetailsPage(goal: goal),
+                builder: (context) => GoalDetailsPage(goalId: goal.goalId!),
               ),
             );
           },

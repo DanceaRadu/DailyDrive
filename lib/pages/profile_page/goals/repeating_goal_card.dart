@@ -12,14 +12,10 @@ import '../../../models/goal_period.model.dart';
 class RepeatingGoalCard extends ConsumerWidget {
 
   final RepeatingGoal goal;
-  final bool animate;
-  final bool showTitle;
 
   const RepeatingGoalCard({
     super.key,
     required this.goal,
-    this.animate = true,
-    this.showTitle = true,
   });
 
   String formatNumber(num number) {
@@ -49,7 +45,7 @@ class RepeatingGoalCard extends ConsumerWidget {
               Navigator.push(
                 context,
                 MaterialPageRoute(
-                  builder: (context) => RepeatingGoalDetailsPage(goal: goal),
+                  builder: (context) => RepeatingGoalDetailsPage(goalId: goal.goalId!),
                 ),
               );
             },
@@ -70,17 +66,17 @@ class RepeatingGoalCard extends ConsumerWidget {
                         return CircularPercentIndicator(
                           radius: availableSize / 2 - 2,
                           lineWidth: 15,
-                          animation: animate,
+                          animation: true,
                           percent: getCurrentProgress() / goal.goal,
                           circularStrokeCap: CircularStrokeCap.round,
                           progressColor: ColorPalette.accent,
                           backgroundColor: ColorPalette.surface,
-                          header: showTitle ? Padding(
+                          header: Padding(
                             padding: const EdgeInsets.only(bottom: 10),
                             child: Text(
                               goal.title,
                             ),
-                          ) : null,
+                          ),
                           center: Column(
                             mainAxisAlignment: MainAxisAlignment.center,
                             children: [
