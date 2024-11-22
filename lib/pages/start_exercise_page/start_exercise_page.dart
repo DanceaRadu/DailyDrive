@@ -1,3 +1,5 @@
+import 'dart:async';
+
 import 'package:daily_drive/color_palette.dart';
 import 'package:daily_drive/exercise_strategies/exercise_context.dart';
 import 'package:daily_drive/widgets/main_button.dart';
@@ -26,6 +28,9 @@ class _StartExercisePageState extends State<StartExercisePage> with TickerProvid
   late Animation<Offset> _textAnimation;
   late Animation<double> _textFadeAnimation;
   late Animation<double> _buttonFadeAnimation;
+
+  late Timer _timer;
+  int _elapsedTime = 0;
 
   @override
   void initState() {
@@ -67,7 +72,6 @@ class _StartExercisePageState extends State<StartExercisePage> with TickerProvid
   @override
   void dispose() {
     _animationController.dispose();
-    _exerciseContext.stopRepDetection();
     _exerciseContext.reset();
     _exerciseContext.dispose();
     super.dispose();
@@ -76,28 +80,45 @@ class _StartExercisePageState extends State<StartExercisePage> with TickerProvid
   void _onRepDetected(int repCount) {
     if(mounted) {
       setState(() {
-        _repCount = repCount;
+        _repCount = (repCount / 2).floor();
       });
     }
+  }
+
+  void _startTimer() {
+    _timer = Timer.periodic(const Duration(seconds: 1), (timer) {
+      if (!_isPaused) {
+        setState(() {
+          _elapsedTime++;
+        });
+      }
+    });
   }
 
   void _startTracking() {
     setState(() {
       _isTracking = true;
+      _isPaused = false;
       _repCount = 0;
+      _elapsedTime = 0;
     });
     _animationController.forward();
     _exerciseContext.reset();
+    _startTimer();
     _exerciseContext.startRepDetection();
   }
 
-  void _stopTracking() {
-    _exerciseContext.stopRepDetection();
+  Future<void> _reset() async {
+    bool? result = await _showBackDialog(context);
+    if(result == null || !result) return;
+
+    _timer.cancel();
+    _exerciseContext.reset();
     _animationController.reverse();
     setState(() {
       _isTracking = false;
+      _isPaused = false;
     });
-    //popup whatever else logic idk
   }
 
   void _submit() {
@@ -126,7 +147,7 @@ class _StartExercisePageState extends State<StartExercisePage> with TickerProvid
           title: const Text('Are you sure?'),
           backgroundColor: ColorPalette.darkerSurface,
           content: const Text(
-            'Are you sure you want to leave this page?',
+            'Doing this will reset your progress. Continue?',
           ),
           actions: <Widget>[
             TextButton(
@@ -142,7 +163,7 @@ class _StartExercisePageState extends State<StartExercisePage> with TickerProvid
               style: TextButton.styleFrom(
                 textStyle: Theme.of(context).textTheme.labelLarge,
               ),
-              child: const Text('Leave'),
+              child: const Text('Yes'),
               onPressed: () {
                 Navigator.pop(context, true);
               },
@@ -151,6 +172,12 @@ class _StartExercisePageState extends State<StartExercisePage> with TickerProvid
         );
       },
     );
+  }
+
+  String _formatTime(int elapsed) {
+    final minutes = elapsed ~/ 60;
+    final seconds = elapsed % 60;
+    return '${minutes.toString().padLeft(2, '0')}:${seconds.toString().padLeft(2, '0')}';
   }
 
   @override
@@ -179,13 +206,32 @@ class _StartExercisePageState extends State<StartExercisePage> with TickerProvid
                   opacity: _textFadeAnimation,
                   child: Column(
                     children: [
-                      Text(
-                        'Reps: $_repCount',
-                        style: const TextStyle(fontSize: 32, fontWeight: FontWeight.bold),
+                      RichText(
+                        text: TextSpan(
+                          children: [
+                            TextSpan(
+                              text: '$_repCount',
+                              style: const TextStyle(
+                                fontSize: 72,
+                                fontWeight: FontWeight.bold,
+                                color: Colors.white,
+                              ),
+                            ),
+                            TextSpan(
+                              text: ' ${widget.exerciseType.suffix.toUpperCase()}',
+                              style: const TextStyle(
+                                fontSize: 16,
+                                fontWeight: FontWeight.bold,
+                                color: Colors.grey,
+                              ),
+                            ),
+                          ],
+                        ),
                       ),
+                      const SizedBox(height: 8),
                       Text(
-                        'Reps: $_repCount',
-                        style: const TextStyle(fontSize: 32, fontWeight: FontWeight.bold),
+                        _formatTime(_elapsedTime),
+                        style: const TextStyle(fontSize: 26, fontWeight: FontWeight.bold),
                       ),
                     ]
                   ),
@@ -208,7 +254,7 @@ class _StartExercisePageState extends State<StartExercisePage> with TickerProvid
                       child: FadeTransition(
                         opacity: _buttonFadeAnimation,
                         child: TextButton.icon(
-                          onPressed: _stopTracking,
+                          onPressed: _reset,
                           icon: const Icon(Icons.restart_alt), // Replace with your desired icon
                           label: const Text('Reset'),
                         ),

@@ -79,6 +79,9 @@ class RepeatingGoalCard extends ConsumerWidget {
                               children: [
                                 Text(
                                   goal.title,
+                                  style: const TextStyle(
+                                    fontWeight: FontWeight.bold,
+                                  ),
                                 ),
                                 Text(
                                   exerciseType.namePlural,

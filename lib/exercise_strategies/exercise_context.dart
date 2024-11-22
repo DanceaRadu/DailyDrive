@@ -25,26 +25,26 @@ class ExerciseContext {
     }
   }
 
-  void startRepDetection() {
-    _accelerometerSubscription = userAccelerometerEventStream().listen((event) {
-      if(_repDetectionStrategy.detectRep(event.x, event.y, event.z, _lastRepTime)) {
-        _repCount++;
-        _lastRepTime = DateTime.now();
-        onRepDetected(_repCount);
-      }
-    });
+  handleAccelerometerEvent(UserAccelerometerEvent event) {
+    if(_repDetectionStrategy.detectRep(event.x, event.y, event.z, _lastRepTime)) {
+      _repCount++;
+      _lastRepTime = DateTime.now();
+      onRepDetected(_repCount);
+    }
   }
 
-  void stopRepDetection() {
-    _accelerometerSubscription?.cancel();
+  void startRepDetection() {
+    _lastRepTime = null;
+    _repCount = 0;
+    _accelerometerSubscription = userAccelerometerEventStream().listen(handleAccelerometerEvent);
   }
 
   void pauseRepDetection() {
-
+    _accelerometerSubscription?.cancel();
   }
 
   void resumeRepDetection() {
-
+    _accelerometerSubscription = userAccelerometerEventStream().listen(handleAccelerometerEvent);
   }
 
   void reset() {
