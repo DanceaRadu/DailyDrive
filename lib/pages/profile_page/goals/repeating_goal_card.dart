@@ -64,6 +64,7 @@ class RepeatingGoalCard extends ConsumerWidget {
                             : constraints.maxHeight;
                         String goalPercentageString = '${((getCurrentProgress() / goal.goal) * 100).toInt()}%';
                         String goalProgressString = '${formatNumber(getCurrentProgress())} / ${formatNumber(goal.goal)}';
+                        String goalTypeString = 'of ${goal.periodType.toLowerCase()} goal';
 
                         return CircularPercentIndicator(
                           radius: availableSize / 2 - 2,
@@ -103,11 +104,19 @@ class RepeatingGoalCard extends ConsumerWidget {
                                   color: Colors.white,
                                 ),
                               ),
+                              Text(
+                                goalTypeString,
+                                style: TextStyle(
+                                  fontSize: 13.0,
+                                  fontWeight: FontWeight.bold,
+                                  color: Colors.grey[400],
+                                ),
+                              ),
                               const SizedBox(height: 4.0),
                               Text(
                                 goalProgressString,
                                 style: TextStyle(
-                                  fontSize: 14.0,
+                                  fontSize: 13.0,
                                   color: Colors.grey[400],
                                 ),
                               ),

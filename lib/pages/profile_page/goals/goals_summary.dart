@@ -7,6 +7,7 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import '../../../models/exercise_type.model.dart';
+import '../../../models/goal.model.dart';
 
 class GoalsSummary extends ConsumerWidget {
   const GoalsSummary({super.key});
@@ -29,6 +30,11 @@ class GoalsSummary extends ConsumerWidget {
     );
   }
 
+  List<Goal> _filterAndSortGoals(List<Goal> goals) {
+    return goals.where((goal) => goal.currentProgress < goal.goal).toList()
+      ..sort((a, b) => b.createdAt.compareTo(a.createdAt));
+  }
+
   @override
   Widget build(BuildContext context, WidgetRef ref) {
 
@@ -41,33 +47,36 @@ class GoalsSummary extends ConsumerWidget {
     final combinedData = ref.watch(combinedStreamProvider(user.uid));
 
     return combinedData.when(
-      data: (data) => ListView(
-        shrinkWrap: true,
-        physics: const NeverScrollableScrollPhysics(),
-        children: [
-          GridView.builder(
-            shrinkWrap: true,
-            physics: const NeverScrollableScrollPhysics(),
-            gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
-              crossAxisCount: 2,
-              crossAxisSpacing: 4,
-              mainAxisSpacing: 4,
-              childAspectRatio: 0.78,
+      data: (data) {
+        final List<Goal> goals = _filterAndSortGoals(data.goals);
+        return ListView(
+          shrinkWrap: true,
+          physics: const NeverScrollableScrollPhysics(),
+          children: [
+            GridView.builder(
+              shrinkWrap: true,
+              physics: const NeverScrollableScrollPhysics(),
+              gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
+                crossAxisCount: 2,
+                crossAxisSpacing: 4,
+                mainAxisSpacing: 4,
+                childAspectRatio: 0.78,
+              ),
+              itemCount: goals.length + combinedData.value!.repeatingGoals.length + 1,
+              itemBuilder: (BuildContext context, int index) {
+                if(index == goals.length + combinedData.value!.repeatingGoals.length) {
+                  return AddGoalCard(
+                    onAddGoalPressed: (context) => onAddGoalPressed(context, combinedData.value!.exerciseTypes),
+                  );
+                } else if(index < goals.length) {
+                  return GoalCard(goal: goals[index]);
+                }
+                return RepeatingGoalCard(goal: combinedData.value!.repeatingGoals[index - goals.length]);
+              },
             ),
-            itemCount: combinedData.value!.goals.length + combinedData.value!.repeatingGoals.length + 1,
-            itemBuilder: (BuildContext context, int index) {
-              if(index == combinedData.value!.goals.length + combinedData.value!.repeatingGoals.length) {
-                return AddGoalCard(
-                  onAddGoalPressed: (context) => onAddGoalPressed(context, combinedData.value!.exerciseTypes),
-                );
-              } else if(index < combinedData.value!.goals.length) {
-                return GoalCard(goal: combinedData.value!.goals[index]);
-              }
-              return RepeatingGoalCard(goal: combinedData.value!.repeatingGoals[index - combinedData.value!.goals.length]);
-            },
-          ),
-        ],
-      ),
+          ],
+        );
+      },
       error: (error, stackTrace) {
         print('Error loading goals: $error');
         return const SizedBox(

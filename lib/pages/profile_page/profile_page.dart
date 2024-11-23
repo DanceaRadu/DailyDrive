@@ -1,5 +1,6 @@
 import 'package:daily_drive/color_palette.dart';
 import 'package:daily_drive/pages/profile_page/goals/goals_summary.dart';
+import 'package:daily_drive/pages/profile_page/history/history_list.dart';
 import 'package:daily_drive/pages/profile_page/profile_info.dart';
 import 'package:daily_drive/pages/profile_page/profile_tab_selector.dart';
 import 'package:firebase_auth/firebase_auth.dart';
@@ -29,7 +30,7 @@ class _ProfilePageState extends State<ProfilePage> {
       case 0:
         return const GoalsSummary();
       case 1:
-        return const Placeholder();
+        return const HistoryList();
       default:
         return const GoalsSummary();
     }
