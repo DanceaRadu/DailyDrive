@@ -124,9 +124,21 @@ class _GoalsFormState extends State<GoalsForm> {
       default: daysOffset = 1;
     }
     return GoalPeriod(
-        periodStart: DateTime.now(),
-        periodEnd: DateTime.now().add(Duration(days: daysOffset)),
-        progress: 0
+      periodStart: DateTime(
+          DateTime.now().year,
+          DateTime.now().month,
+          DateTime.now().day,
+          0,
+          0
+      ),
+      periodEnd: DateTime(
+          DateTime.now().year,
+          DateTime.now().month,
+          DateTime.now().day,
+          0, // Hour
+          0 // 5 minutes past midnight
+      ).add(Duration(days: daysOffset)),
+      progress: 0,
     );
   }
 

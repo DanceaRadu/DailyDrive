@@ -2,10 +2,15 @@ import 'dart:async';
 
 import 'package:daily_drive/color_palette.dart';
 import 'package:daily_drive/exercise_strategies/exercise_context.dart';
+import 'package:daily_drive/models/exercise_session.model.dart';
+import 'package:daily_drive/pages/start_exercise_page/submit_exercise_session_dialog.dart';
+import 'package:daily_drive/services/exercise_session.service.dart';
 import 'package:daily_drive/widgets/main_button.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 
 import '../../models/exercise_type.model.dart';
+import '../auth_pages/error_dialog.dart';
 
 class StartExercisePage extends StatefulWidget {
   const StartExercisePage({super.key, required this.exerciseType});
@@ -19,9 +24,11 @@ class StartExercisePage extends StatefulWidget {
 class _StartExercisePageState extends State<StartExercisePage> with TickerProviderStateMixin {
 
   late ExerciseContext _exerciseContext;
+  final ExerciseSessionService _exerciseSessionService = ExerciseSessionService();
   int _repCount = 0;
   bool _isTracking = false;
   bool _isPaused = false;
+  bool isSubmitting = false;
 
   late AnimationController _animationController;
   late Animation<Offset> _buttonAnimation;
@@ -108,9 +115,11 @@ class _StartExercisePageState extends State<StartExercisePage> with TickerProvid
     _exerciseContext.startRepDetection();
   }
 
-  Future<void> _reset() async {
-    bool? result = await _showBackDialog(context);
-    if(result == null || !result) return;
+  Future<void> _reset([bool? showDialog = true]) async {
+    if(showDialog == true) {
+      bool? result = await _showBackDialog(context);
+      if (result == null || !result) return;
+    }
 
     _timer.cancel();
     _exerciseContext.reset();
@@ -121,8 +130,44 @@ class _StartExercisePageState extends State<StartExercisePage> with TickerProvid
     });
   }
 
-  void _submit() {
+  void _submit(BuildContext context) async {
+    _pause();
+    setState(() {
+      isSubmitting = true;
+    });
+    int? repCount = await SubmitExerciseSessionDialog.show(
+        context,
+        repCount: _repCount,
+        exerciseType: widget.exerciseType,
+        elapsedTime: _formatTime(_elapsedTime),
+    );
+    if(repCount == null) {
+      setState(() {
+        isSubmitting = false;
+      });
+      return;
+    }
 
+    try {
+      User? user = FirebaseAuth.instance.currentUser;
+      if(user == null) {
+        throw Exception('User not logged in');
+      }
+      await _exerciseSessionService.addSession(ExerciseSession(
+        exerciseTypeId: widget.exerciseType.exerciseTypeId!,
+        userId: user.uid,
+        units: repCount,
+        elapsedSeconds: _elapsedTime,
+        createdAt: DateTime.now(),
+      ));
+      _reset(false);
+    } catch(e) {
+      _showErrorDialog('Error submitting.', 'Please try again.');
+    } finally {
+      setState(() {
+        isSubmitting = false;
+      });
+    }
   }
 
   void _pause() {
@@ -171,6 +216,15 @@ class _StartExercisePageState extends State<StartExercisePage> with TickerProvid
           ],
         );
       },
+    );
+  }
+
+  void _showErrorDialog(String title, String message) {
+    showDialog(
+        context: context,
+        builder: (BuildContext context) {
+          return ErrorDialog(title: title, message: message);
+        }
     );
   }
 
@@ -240,8 +294,9 @@ class _StartExercisePageState extends State<StartExercisePage> with TickerProvid
               SizedBox(
                 width: 220,
                 child: MainButton(
-                  onPressed: _isTracking ? _submit : _startTracking,
+                  onPressed: _isTracking ? () { _submit(context); } : _startTracking,
                   text: _isTracking ? 'Submit' : 'Start Exercise',
+                  isLoading: isSubmitting,
                 ),
               ),
               SizedBox(
