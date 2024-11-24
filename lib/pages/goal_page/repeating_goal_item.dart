@@ -29,8 +29,14 @@ class RepeatingGoalItem extends StatelessWidget {
       isOngoing = true;
       iconColor = ColorPalette.ongoingColor;
       icon = Icons.pending;
-    }
-    else if(goal.goal <= goalPeriod.progress) {
+
+      if(goal.goal <= goalPeriod.progress) {
+        isCompleted = true;
+        iconColor = ColorPalette.accent;
+        icon = Icons.check_circle;
+      }
+
+    } else if(goal.goal <= goalPeriod.progress) {
       isCompleted = true;
       iconColor = ColorPalette.accent;
       icon = Icons.check_circle;
