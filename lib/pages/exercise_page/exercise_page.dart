@@ -1,3 +1,4 @@
+import 'package:daily_drive/models/exercise_type.model.dart';
 import 'package:daily_drive/pages/exercise_page/exercise_card.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
@@ -5,6 +6,14 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 import '../../providers/combined.provider.dart';
 import '../../styling_variables.dart';
+
+Map<String, Icon> iconMap = {
+  "fitness_center": const Icon(Icons.fitness_center),
+  "sports_handball": const Icon(Icons.sports_handball),
+  "rowing": const Icon(Icons.rowing),
+  "directions_run": const Icon(Icons.directions_run),
+  "arrow_upward": const Icon(Icons.arrow_upward),
+};
 
 class ExercisePage extends ConsumerWidget {
   const ExercisePage({super.key});
@@ -29,11 +38,16 @@ class ExercisePage extends ConsumerWidget {
               mainAxisSpacing: 15.0,
               childAspectRatio: 0.9,
               padding: const EdgeInsets.all(10.0),
-              children: [
-                ExerciseCard(exerciseType: combinedData.exerciseTypes[0], cardColor: const Color(0xFFB172F4), icon: const Icon(Icons.fitness_center)),
-                ExerciseCard(exerciseType: combinedData.exerciseTypes[1], cardColor: const Color(0xFFCB8177), icon: const Icon(Icons.sports_basketball)),
-                ExerciseCard(exerciseType: combinedData.exerciseTypes[2], cardColor: const Color(0xFFCBC049), icon: const Icon(Icons.sports_tennis)),
-              ]
+              children: List.generate(combinedData.exerciseTypes.length,
+                  (index) {
+                    ExerciseType type = combinedData.exerciseTypes[index];
+                    return ExerciseCard(
+                        exerciseType: type,
+                        cardColor: Color(int.parse(type.color)),
+                        icon: iconMap[type.icon]!
+                    );
+                  }
+              )
           ),
         ),
         error: (e, stackTrace) => const Center(child: Text('Error loading data')),

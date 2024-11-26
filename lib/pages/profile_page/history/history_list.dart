@@ -36,6 +36,12 @@ class HistoryList extends ConsumerWidget {
     return combinedData.when(
       data: (data) {
         List<Goal> goals = _filterAndSortGoals(data.goals);
+        if(goals.isEmpty) {
+          return const SizedBox(
+            height: 100,
+            child: Center(child: Text('No completed goals yet.')),
+          );
+        }
 
         return ListView.builder(
           shrinkWrap: true,

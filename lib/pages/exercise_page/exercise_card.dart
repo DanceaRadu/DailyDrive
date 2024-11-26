@@ -1,4 +1,5 @@
 import 'package:daily_drive/models/exercise_type.model.dart';
+import 'package:daily_drive/pages/jogging/jogging_page.dart';
 import 'package:daily_drive/pages/start_exercise_page/start_exercise_page.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
@@ -22,7 +23,12 @@ class ExerciseCard extends StatelessWidget {
       onTap: () {
         Navigator.push(
             context,
-            MaterialPageRoute(builder: (context) => StartExercisePage(exerciseType: exerciseType))
+            MaterialPageRoute(builder: (context) {
+              if(exerciseType.name == 'Jogging') {
+                return const JoggingPage();
+              }
+              return StartExercisePage(exerciseType: exerciseType);
+            })
         );
       },
       child: Card(
@@ -36,7 +42,7 @@ class ExerciseCard extends StatelessWidget {
               Icon(
                 icon.icon,
                 color: Colors.white.withOpacity(0.8),
-                size: icon.size ?? 48.0,
+                size: icon.size ?? 50.0,
               ),
               Text(
                 exerciseType.namePlural,

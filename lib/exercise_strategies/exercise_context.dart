@@ -3,6 +3,8 @@ import 'dart:async';
 import 'package:daily_drive/exercise_strategies/pullup_detection.strategy.dart';
 import 'package:daily_drive/exercise_strategies/pushup_detection.strategy.dart';
 import 'package:daily_drive/exercise_strategies/rep_detection.strategy.dart';
+import 'package:daily_drive/exercise_strategies/situp_detection_strategy.dart';
+import 'package:daily_drive/exercise_strategies/squat_detection_strategy.dart';
 import 'package:sensors_plus/sensors_plus.dart';
 import '../models/exercise_type.model.dart';
 
@@ -20,6 +22,10 @@ class ExerciseContext {
       _repDetectionStrategy = PushupDetectionStrategy();
     } else if(exerciseType.namePlural == "Pull-ups") {
       _repDetectionStrategy = PullupDetectionStrategy();
+    } else if(exerciseType.namePlural == "Sit-ups") {
+      _repDetectionStrategy = SitupDetectionStrategy();
+    } else if(exerciseType.namePlural == "Squats") {
+      _repDetectionStrategy = SquatDetectionStrategy();
     } else {
       throw Exception('Exercise type not supported');
     }

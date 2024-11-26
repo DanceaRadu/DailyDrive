@@ -159,6 +159,7 @@ class _StartExercisePageState extends State<StartExercisePage> with TickerProvid
         units: repCount,
         elapsedSeconds: _elapsedTime,
         createdAt: DateTime.now(),
+        calories: repCount * widget.exerciseType.caloriesPerUnit,
       ));
       _reset(false);
     } catch(e) {
