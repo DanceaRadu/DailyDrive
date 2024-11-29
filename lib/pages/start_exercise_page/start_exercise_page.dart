@@ -135,18 +135,19 @@ class _StartExercisePageState extends State<StartExercisePage> with TickerProvid
     setState(() {
       isSubmitting = true;
     });
-    int? repCount = await SubmitExerciseSessionDialog.show(
+    num? repCountNum = await SubmitExerciseSessionDialog.show(
         context,
         repCount: _repCount,
         exerciseType: widget.exerciseType,
         elapsedTime: _formatTime(_elapsedTime),
     );
-    if(repCount == null) {
+    if(repCountNum == null) {
       setState(() {
         isSubmitting = false;
       });
       return;
     }
+    int repCount = repCountNum.toInt();
 
     try {
       User? user = FirebaseAuth.instance.currentUser;
@@ -248,6 +249,7 @@ class _StartExercisePageState extends State<StartExercisePage> with TickerProvid
       },
       child: Scaffold(
         appBar: AppBar(
+          centerTitle: true,
           title: Text(widget.exerciseType.namePlural),
         ),
         body: SizedBox.expand(
@@ -311,7 +313,7 @@ class _StartExercisePageState extends State<StartExercisePage> with TickerProvid
                         opacity: _buttonFadeAnimation,
                         child: TextButton.icon(
                           onPressed: _reset,
-                          icon: const Icon(Icons.restart_alt), // Replace with your desired icon
+                          icon: const Icon(Icons.restart_alt),
                           label: const Text('Reset'),
                         ),
                       ),

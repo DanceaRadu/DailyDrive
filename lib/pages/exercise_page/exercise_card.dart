@@ -25,7 +25,7 @@ class ExerciseCard extends StatelessWidget {
             context,
             MaterialPageRoute(builder: (context) {
               if(exerciseType.name == 'Jogging') {
-                return const JoggingPage();
+                return JoggingPage(joggingExerciseType: exerciseType);
               }
               return StartExercisePage(exerciseType: exerciseType);
             })

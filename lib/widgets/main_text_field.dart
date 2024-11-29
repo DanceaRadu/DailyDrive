@@ -11,6 +11,7 @@ class MainTextField extends StatelessWidget {
   final FormFieldValidator<String>? validator;
   final String? trailingText;
   final bool isNumeric;
+  final bool isNumericDecimal;
 
   const MainTextField({
     super.key,
@@ -21,6 +22,7 @@ class MainTextField extends StatelessWidget {
     this.validator,
     this.trailingText,
     this.isNumeric = false,
+    this.isNumericDecimal = false,
   });
 
   @override
@@ -57,7 +59,7 @@ class MainTextField extends StatelessWidget {
       ),
       keyboardType: isNumeric ? TextInputType.number : TextInputType.text,
       inputFormatters: [
-        if (isNumeric) FilteringTextInputFormatter.digitsOnly,
+        if (isNumeric && !isNumericDecimal) FilteringTextInputFormatter.digitsOnly,
       ],
       style: const TextStyle(
         color: ColorPalette.textColor,

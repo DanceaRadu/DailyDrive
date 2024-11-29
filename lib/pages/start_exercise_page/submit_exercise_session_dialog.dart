@@ -8,32 +8,36 @@ import '../../models/exercise_type.model.dart';
 
 class SubmitExerciseSessionDialog extends StatefulWidget {
 
-  final int repCount;
+  final num repCount;
   final ExerciseType exerciseType;
   final String elapsedTime;
+  final bool isDecimal;
 
   const SubmitExerciseSessionDialog({
     super.key,
     required this.repCount,
     required this.exerciseType,
     required this.elapsedTime,
+    this.isDecimal = false,
   });
 
   @override
   State<SubmitExerciseSessionDialog> createState() => _SubmitExerciseSessionDialogState();
 
-  static Future<int?> show(
+  static Future<num?> show(
       BuildContext context, {
-        required int repCount,
+        required num repCount,
         required ExerciseType exerciseType,
         required String elapsedTime,
+        bool isDecimal = false,
       }) {
-    return showDialog<int>(
+    return showDialog<num>(
       context: context,
       builder: (context) => SubmitExerciseSessionDialog(
           repCount: repCount,
           exerciseType: exerciseType,
           elapsedTime: elapsedTime,
+          isDecimal: isDecimal,
       ),
     );
   }
@@ -43,10 +47,17 @@ class _SubmitExerciseSessionDialogState extends State<SubmitExerciseSessionDialo
   late TextEditingController controller = TextEditingController();
   final _formKey = GlobalKey<FormState>();
 
+  String formatNumber(num number) {
+    if (widget.isDecimal) {
+      return number.toStringAsFixed(2);
+    }
+    return number.toString();
+  }
+
   @override
   void initState() {
     super.initState();
-    controller = TextEditingController(text: widget.repCount.toString());
+    controller = TextEditingController(text: formatNumber(widget.repCount));
   }
 
   @override
@@ -86,6 +97,7 @@ class _SubmitExerciseSessionDialogState extends State<SubmitExerciseSessionDialo
                 controller: controller,
                 validator: nullValidator,
                 isNumeric: true,
+                isNumericDecimal: widget.isDecimal,
               )
 
             ),
@@ -101,7 +113,7 @@ class _SubmitExerciseSessionDialogState extends State<SubmitExerciseSessionDialo
         ),
         TextButton(
           onPressed: () {
-            final int? enteredNumber = int.tryParse(controller.text);
+            final num? enteredNumber = num.tryParse(controller.text);
             if (_formKey.currentState?.validate() ?? false) {
               Navigator.of(context).pop(enteredNumber);
             }
