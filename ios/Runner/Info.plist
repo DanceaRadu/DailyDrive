@@ -8,6 +8,12 @@
     <string>We need your location to track your jogging route.</string>
     <key>NSLocationAlwaysUsageDescription</key>
     <string>We need your location to track your jogging route even when the app is in the background.</string>
+    <key>NSMotionUsageDescription</key>
+    <string>This application tracks your steps</string>
+    <key>UIBackgroundModes</key>
+    <array>
+        <string>processing</string>
+    </array>
 	<key>CFBundleDevelopmentRegion</key>
 	<string>$(DEVELOPMENT_LANGUAGE)</string>
 	<key>CFBundleDisplayName</key>

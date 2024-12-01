@@ -1,5 +1,5 @@
 import 'package:daily_drive/color_palette.dart';
-import 'package:daily_drive/pages/dashboard_page.dart';
+import 'package:daily_drive/pages/dashboard/dashboard_page.dart';
 import 'package:daily_drive/pages/profile_page/profile_page.dart';
 import 'package:flutter/material.dart';
 import 'package:firebase_auth/firebase_auth.dart';
