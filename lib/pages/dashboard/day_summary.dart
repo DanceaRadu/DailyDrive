@@ -1,15 +1,28 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_svg/svg.dart';
 import 'package:percent_indicator/circular_percent_indicator.dart';
 
 import '../../color_palette.dart';
+import '../../providers/steps.provider.dart';
 
-class DaySummary extends StatelessWidget {
-  const DaySummary({super.key});
+class DaySummary extends ConsumerWidget {
+
+  final int calories;
+  final int maxCalories = 600;
+  final int maxSteps = 150000;
+
+  const DaySummary({
+    super.key,
+    required this.calories,
+  });
 
   @override
-  Widget build(BuildContext context) {
+  Widget build(BuildContext context, WidgetRef ref) {
+
+    final stepCount = ref.watch(stepCounterProvider);
+
     return Card(
       color: ColorPalette.darkerSurface,
       child: Padding(
@@ -21,6 +34,9 @@ class DaySummary extends StatelessWidget {
                   ? constraints.maxWidth
                   : constraints.maxHeight;
               availableSize = availableSize / 2 - 8;
+
+              int actualCalories = calories > maxCalories ? 600 : calories;
+              int actualSteps = stepCount > maxSteps ? maxSteps : stepCount;
 
               return Column(
                 children: [
@@ -40,7 +56,7 @@ class DaySummary extends StatelessWidget {
                           radius: availableSize / 2 - 2,
                           lineWidth: 20,
                           animation: true,
-                          percent: 1200 / 3400,
+                          percent: actualCalories / maxCalories,
                           circularStrokeCap: CircularStrokeCap.round,
                           progressColor: ColorPalette.secondary,
                           backgroundColor: ColorPalette.surface,
@@ -54,7 +70,7 @@ class DaySummary extends StatelessWidget {
                               ),
                               const SizedBox(height: 4.0),
                               Text(
-                                "456 cal",
+                                '$actualCalories cal',
                                 style: TextStyle(
                                   fontSize: 14.0,
                                   fontWeight: FontWeight.bold,
@@ -72,7 +88,8 @@ class DaySummary extends StatelessWidget {
                           radius: availableSize / 2 - 2,
                           lineWidth: 20,
                           animation: true,
-                          percent: 1200 / 3400,
+                          animateFromLastPercent: true,
+                          percent: actualSteps / maxSteps,
                           circularStrokeCap: CircularStrokeCap.round,
                           progressColor: ColorPalette.accent,
                           backgroundColor: ColorPalette.surface,
@@ -86,7 +103,7 @@ class DaySummary extends StatelessWidget {
                               ),
                               const SizedBox(height: 4.0),
                               Text(
-                                "8345",
+                                '$actualSteps',
                                 style: TextStyle(
                                   fontWeight: FontWeight.bold,
                                   fontSize: 14.0,
